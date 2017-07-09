@@ -10,3 +10,12 @@
     content: ' ';
   }
 }
+
+@mixin bg-image($url) {
+  background-image: url($url + '@2x.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  @media (-webkit-min-device-pixel-radio: 3), (min-device-pixel-radio: 3) {
+    background-image: url($url + '@3x.png');
+  }
+}
