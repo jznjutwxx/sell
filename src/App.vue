@@ -5,12 +5,12 @@
       <li class="tab-item border-1px">
         <router-link to="/goods">商品</router-link>
       </li>
-      <li class="tab-item">
+      <li class="tab-item border-1px">
          <router-link to="/ratings">评价</router-link>
       </li>
-      <li class="tab-item">
+      <li class="tab-item border-1px">
         <router-link to="/seller">商家</router-link>
-        </li>      
+      </li>      
     </ul>
    <router-view></router-view>
   </div>
