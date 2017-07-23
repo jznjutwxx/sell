@@ -1,13 +1,13 @@
 <template>
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
-      <ul>
-        <li v-for="(item, index) in goods" :key="index" class="menu-item">
+       <ul>
+        <li v-for="(item, index) in goods" :key="index" class="menu-item" :class="{'current': currentIndex === index}" @click="selectMenu(index, $event)">
           <span class="text">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
         </li>
-      </ul>
+      </ul> 
     </div>
     <div class="foods-wrapper" ref="foodWrapper">
       <ul>
@@ -33,11 +33,13 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
+import shopcart from 'components/shopcart/shopcart';
 
 const ERR_OK = 0;// 状态码
 
@@ -50,8 +52,21 @@ export default {
   data() {
     return {
       goods: {},
-      listHeight: []
+      listHeight: [0], // 高度临界值
+      scrollY: 0 // 滚动值
     };
+  },
+  computed: {
+    currentIndex() {
+      for (let i = 0; i < this.listHeight.length; i++) {
+        let heightstart = this.listHeight[i];
+        let heightend = this.listHeight[i + 1];
+        if (!heightend || this.scrollY >= heightstart && this.scrollY < heightend) {
+          return i;
+        }
+      }
+      return 0;
+    }
   },
   mounted() {
     this.$http.get('./api/goods').then((response) => {
@@ -69,13 +84,39 @@ export default {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
   },
   methods: {
-    _initScroll: function() {
-      this.meunScroll = new BScroll(this.$refs.menuWrapper, {});
-      this.foodScroll = new BScroll(this.$refs.foodWrapper, {});
+    // 点击menu-item定位
+    selectMenu: function(index, event) {
+      if (!event._constructed) {
+        // 原生点击事件不具有constructed属性
+        let foodlist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
+        this.foodScroll.scrollToElement(foodlist[index], 200);
+      }
     },
+    // 初始化滚动
+    _initScroll: function() {
+      this.meunScroll = new BScroll(this.$refs.menuWrapper, {
+        click: true // 派发点击事件
+      });
+      this.foodScroll = new BScroll(this.$refs.foodWrapper, {
+        'probeType': 3 // 配置滚动
+      });
+      this.foodScroll.on('scroll', (pos) => {
+        this.scrollY = Math.abs(Math.round(pos.y));// 返回滚动值
+      });
+    },
+    // 计算food-list高度
     _caculateHeight: function() {
-      this.foodlist = this.$refs.foodWrapper.getElementsByClassName('');
+      let foodlist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
+      let height = 0;
+
+      for (let i = 0; i < foodlist.length; i++) {
+        height += foodlist[i].clientHeight;
+        this.listHeight.push(height);
+      }
     }
+  },
+  components: {
+    shopcart
   }
 };
 </script>
@@ -102,6 +143,18 @@ export default {
       height: 54px;
       padding: 0 12px;   
       line-height: 14px;
+
+      &.current {
+        position: relative;
+        z-index: 10;
+        margin-top: -1px;
+        font-weight: 700;
+        background: #fff;
+
+        .text {
+          @include border-none();
+        }
+      }
 
       .icon {
         display: inline-block;
