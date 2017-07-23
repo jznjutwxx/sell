@@ -166,7 +166,7 @@ export default {
 
         .name {
           margin: 2px 0 8px 0;
-          hieght: 14px;
+          height: 14px;
           line-height: 14px;
           font-size: 14px;
           color: rgb(7, 17, 27);
