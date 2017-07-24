@@ -3,15 +3,16 @@
     <div class="content">
       <div class="content-left">
         <div class="logo-wrapper">
-          <div class="logo">
+          <div class="logo" :class="{'hightlight': totalCount>0}">
             <i class="icon-shopping_cart"></i>
           </div>
+          <div class="num" v-show="totalCount>0">{{totalCount}}</div>
         </div>
-        <div class="price">$12</div>
+        <div class="price" :class="{'highlight': totalPrice>0}">￥{{totalPrice}}</div>
         <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
       </div>
       <div class="content-right">
-        <div class="pay">￥{{minPrice}}元起送</div>
+        <div class="pay" :class="payClass">{{payDesc}}</div>
       </div>
     </div>
   </div>
@@ -19,6 +20,15 @@
 <script>
   export default {
     props: {
+      selectFoods: {
+        type: Array,
+        default() {
+          return [{
+            price: 10,
+            count: 3
+          }];
+        }
+      },
       deliveryPrice: {
         type: Number,
         default: 0
@@ -29,6 +39,43 @@
       }
     },
     mounted() {
+    },
+    computed: {
+      totalPrice() {
+        // 计算总价格
+        let total = 0;
+        this.selectFoods.forEach((food) => {
+          total += food.price * food.count;
+        });
+        return total;
+      },
+      totalCount() {
+        // 计算总数量
+        let count = 0;
+        this.selectFoods.forEach((food) => {
+          count += food.count;
+        });
+        return count;
+      },
+      payDesc() {
+        // 计算三种购买情况样式
+        if (this.totalPrice === 0) {
+          // 反引号`` es6字符串的扩展
+          return `￥${this.minPrice}元起送`;
+        } else if (this.totalPrice < this.minPrice) {
+          let diff = this.minPrice - this.totalPrice;
+          return `还差￥${diff}元起送`;
+        } else {
+          return '去结算';
+        }
+      },
+      payClass() {
+        if (this.totalPrice < this.minPrice) {
+          return 'not-enough';
+        } else {
+          return 'enough';
+        }
+      }
     },
     data() {
       return {
@@ -70,14 +117,33 @@
           text-align: center;          
           width: 100%;
           height: 100%;
+          color: #80858a;          
           border-radius: 50%;  
           background: #2b343c; 
-          
+          &.hightlight {
+            background: rgb(0, 160, 220);
+            color: #fff;
+          }
+
           .icon-shopping_cart {
             line-height: 44px;
             font-size: 24px;
-            color: #80858a;
           }
+        }
+        .num {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 24px;
+          height: 16px;
+          line-height: 16px;
+          text-align: center;
+          font-size: 9px;
+          font-weight: 700;
+          color: #fff;
+          border-radius: 16px;          
+          background: rgb(240, 20, 20);
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .4);
         }
       }
       .price {
@@ -91,6 +157,9 @@
         color: rgba(255, 255, 255, .4);
         box-sizing: border-box;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
+        &.highlight {
+          color: #fff;
+        }
       }
       .desc {
         display: inline-block;
@@ -111,6 +180,13 @@
         font-size: 12px;
         font-weight: 700;
         background: #2b333b;
+        &.not-enough {
+          background: #2b333b;
+        }
+        &.enough {
+          color: #fff;
+          background: #00b43c;
+        }
       }
     }
   }
