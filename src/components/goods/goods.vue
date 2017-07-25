@@ -1,3 +1,4 @@
+// 商品列表组件
 <template>
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
@@ -27,19 +28,23 @@
                 <div class="price">
                   <span class="now">￥ {{food.price}}</span><span v-show="food.oldPrice" class="old">￥ {{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food="food"></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart';
+import cartcontrol from 'components/cartcontrol/cartcontrol';
 
 const ERR_OK = 0;// 状态码
 
@@ -51,7 +56,7 @@ export default {
   },
   data() {
     return {
-      goods: {},
+      goods: [],
       listHeight: [0], // 高度临界值
       scrollY: 0 // 滚动值
     };
@@ -66,6 +71,19 @@ export default {
         }
       }
       return 0;
+    },
+    selectFoods() {
+      let foods = [];
+      this.goods.forEach((good) => {
+        // 每一个榜单
+        good.foods.forEach((food) => {
+          // 每一个食品
+          if (food.count) {
+            foods.push(food);
+          }
+        });
+      });
+      return foods;
     }
   },
   mounted() {
@@ -87,10 +105,11 @@ export default {
     // 点击menu-item定位
     selectMenu: function(index, event) {
       if (!event._constructed) {
-        // 原生点击事件不具有constructed属性
-        let foodlist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
-        this.foodScroll.scrollToElement(foodlist[index], 200);
+        return false;
       }
+      // 原生点击事件不具有constructed属性
+      let foodlist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
+      this.foodScroll.scrollToElement(foodlist[index], 200);
     },
     // 初始化滚动
     _initScroll: function() {
@@ -98,6 +117,7 @@ export default {
         click: true // 派发点击事件
       });
       this.foodScroll = new BScroll(this.$refs.foodWrapper, {
+        click: true, // 派发点击事件
         'probeType': 3 // 配置滚动
       });
       this.foodScroll.on('scroll', (pos) => {
@@ -116,7 +136,8 @@ export default {
     }
   },
   components: {
-    shopcart
+    shopcart,
+    cartcontrol
   }
 };
 </script>
@@ -252,6 +273,11 @@ export default {
             font-size: 10px;
             color: rgb(147, 152, 159);
           }
+        }
+        .cartcontrol-wrapper {
+          position: absolute;
+          right: 0;
+          bottom: 12px;
         }
       }
     }

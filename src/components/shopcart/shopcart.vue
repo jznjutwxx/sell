@@ -1,3 +1,4 @@
+// 购物车组件
 <template>
   <div class="shopcart">
     <div class="content">
@@ -23,10 +24,7 @@
       selectFoods: {
         type: Array,
         default() {
-          return [{
-            price: 10,
-            count: 3
-          }];
+          return [];
         }
       },
       deliveryPrice: {
