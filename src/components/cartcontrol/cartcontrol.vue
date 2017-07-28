@@ -31,6 +31,8 @@
         } else {
           this.food.count++;
         }
+        // 派发一个添加购物车事件
+        this.$emit('cartAdd', event.target);
       },
       decreaseCart: function(event) {
         if (!event._constructed) {
