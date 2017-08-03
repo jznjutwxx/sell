@@ -15,7 +15,7 @@
         <li v-for="(item, index) in goods" :key="index" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="(food, index) in item.foods" :key="index" class="food-item border-1px">
+            <li @click="selectFood(food, $event)" v-for="(food, index) in item.foods" :key="index" class="food-item border-1px">
               <div class="icon">
                 <img :src="food.icon" width="100%"/>
               </div>
@@ -38,6 +38,7 @@
       </ul>
     </div>
     <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <food :food="selectedFood" ref="food"></food>
   </div>
 </template>
 
@@ -45,6 +46,7 @@
 import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart';
 import cartcontrol from 'components/cartcontrol/cartcontrol';
+import food from 'components/food/food';
 
 const ERR_OK = 0;// 状态码
 
@@ -58,7 +60,8 @@ export default {
     return {
       goods: [],
       listHeight: [0], // 高度临界值
-      scrollY: 0 // 滚动值
+      scrollY: 0, // 滚动值,
+      selectedFood: {}
     };
   },
   computed: {
@@ -111,6 +114,13 @@ export default {
       let foodlist = this.$refs.foodWrapper.getElementsByClassName('food-list-hook');
       this.foodScroll.scrollToElement(foodlist[index], 200);
     },
+    selectFood: function(food, event) {
+      if (!event._constructed) {
+        return;
+      }
+      this.selectedFood = food;
+      this.$refs.food.show();
+    },
     // 初始化滚动
     _initScroll: function() {
       this.meunScroll = new BScroll(this.$refs.menuWrapper, {
@@ -135,18 +145,22 @@ export default {
       }
     },
     _drop: function(target) {
-      this.$refs.shopcart.drop(target);
+      this.$nextTick(() => {
+        // 手机上计算量比较大，所以为了优化，异步执行当下一个dom改变以后在执行
+        this.$refs.shopcart.drop(target);
+      });
     }
   },
   components: {
     shopcart,
-    cartcontrol
-  },
-  events: {
-    'cart.add' (target) {
-      this._drop(target);
-    }
+    cartcontrol,
+    food
   }
+  // events: {
+  //   'cart.add' (target) {
+  //     this._drop(target);
+  //   }
+  // }
 };
 </script>
 

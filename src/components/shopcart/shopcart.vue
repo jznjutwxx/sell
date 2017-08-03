@@ -74,6 +74,29 @@ export default {
       default: 0
     }
   },
+  data() {
+    return {
+      balls: [
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        }
+      ],
+      dropBalls: [],
+      fold: true // 标记购物车详细组件是否展开
+    };
+  },
   computed: {
     totalPrice() {
       // 计算总价格
@@ -144,7 +167,6 @@ export default {
           return;
         }
       }
-      console.log(this.dropBalls);
     },
     // beforeenter，对应于v-enter
     beforeDrop(el) {
@@ -216,29 +238,6 @@ export default {
   },
   components: {
     cartcontrol
-  },
-  data() {
-    return {
-      balls: [
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        }
-      ],
-      dropBalls: [],
-      fold: true // 标记购物车详细组件是否展开
-    };
   }
 };
 </script>
