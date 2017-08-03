@@ -74,29 +74,6 @@ export default {
       default: 0
     }
   },
-  data() {
-    return {
-      balls: [
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        },
-        {
-          show: false
-        }
-      ],
-      dropBalls: [],
-      fold: true // 标记购物车详细组件是否展开
-    };
-  },
   computed: {
     totalPrice() {
       // 计算总价格
@@ -157,9 +134,9 @@ export default {
   },
   methods: {
     drop(el) {
-      // 寻找当前添加的项目
       for (let i = 0; i < this.balls.length; i++) {
         let ball = this.balls[i];
+        // 我认为这里是为了“抗并发”，我们预设了五个小球，目的是为了当点击频率比较大的时候，不至于“无球可用”，所以在点击添加购物车按钮的时候，我们需要判断当前可用的第一颗球，并把它添加到dropBalls内，同时触发过渡
         if (!ball.show) {
           ball.show = true;
           ball.el = el;
@@ -167,14 +144,19 @@ export default {
           return;
         }
       }
+      console.log(this.dropBalls);
     },
+    // beforeenter，对应于v-enter
     beforeDrop(el) {
       let count = this.balls.length;
       while (count--) {
         let ball = this.balls[count];
         if (ball.show) {
+          // rect返回top，left，right，bottom距离页面的距离
           let rect = ball.el.getBoundingClientRect();
+          // x轴移动的距离
           let x = rect.left - 32;
+          // y轴移动的距离
           let y = -(window.innerHeight - rect.top - 22);
           el.style.display = '';
           el.style.webkitTransform = `translate3d(0,${y}px,0)`;
@@ -185,8 +167,10 @@ export default {
         }
       }
     },
+    // enter，对应于v-enter-to
     dropping(el, done) {
       /* eslint-disable no-unused-vars */
+      // offsetHeight应该是固定的小球高度
       let rf = el.offsetHeight;
       this.$nextTick(() => {
         el.style.webkitTransform = 'translate3d(0,0,0)';
@@ -197,12 +181,13 @@ export default {
         el.addEventListener('transitionend', done);
       });
     },
+    // after-enter
     afterDrop(el) {
-      console.log('4');
+      // 小球完成一次过渡以后，状态还原
       let ball = this.dropBalls.shift();
       if (ball) {
-        console.log('我进来了');
         ball.show = false;
+        // 本来上面一句话就已经可以控制小球的显示隐藏了，可是实际中有延迟，所以使用display直接隐藏
         el.style.display = 'none';
       }
     },
@@ -231,6 +216,29 @@ export default {
   },
   components: {
     cartcontrol
+  },
+  data() {
+    return {
+      balls: [
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        },
+        {
+          show: false
+        }
+      ],
+      dropBalls: [],
+      fold: true // 标记购物车详细组件是否展开
+    };
   }
 };
 </script>
@@ -349,14 +357,14 @@ export default {
       left: 32px;
       bottom: 22px;
       z-index: 200;
-      transition: all 0.4 cubic-bezier(0.49, -0.29, 0.75, 0.41);
+      transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41);
 
       .inner {
         width: 16px;
         height: 16px;
         border-radius: 50%;
         background: rgb(0, 160, 220);
-        transition: all 0.4 linears;        
+        transition: all 0.4s linear;        
       }
     }
   }
