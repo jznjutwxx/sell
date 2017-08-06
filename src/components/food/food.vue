@@ -24,15 +24,15 @@
             <div @click.stop.prevent="addFirst" class="buy" v-show="!food.count || food.count === 0">加入购物车</div>
           </transition>
        </div>
-      </div>
-      <split></split>
-      <div class="info" v-show="food.info">
-        <div class="title">商品详情</div>
-        <div class="text">{{food.info}}</div>
-      </div>
-      <div class="rating">
-        <h1 class="title">商品评价</h1>
-        <ratingselect></ratingselect>
+       <split></split>
+        <div class="info" v-show="food.info">
+          <div class="title">商品详情</div>
+          <div class="text">{{food.info}}</div>
+        </div>
+        <div class="rating">
+          <h1 class="title">商品评价</h1>
+          <ratingselect :select-typeprops="selectTypeprops" :only-content="onlyContentprops" :desc="desc" :ratings="food.ratings"></ratingselect>
+        </div>
       </div>
     </div>
   </transition>
@@ -45,6 +45,8 @@
   import split from 'components/split/split';
   import ratingselect from 'components/ratingselect/ratingselect';
 
+  const ALL = 2;
+
   export default {
     props: {
       food: {
@@ -53,12 +55,22 @@
     },
     data() {
       return {
-        showFlag: false
+        showFlag: false,
+        selectTypeprops: ALL,
+        onlyContentprops: true,
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       };
     },
     methods: {
       show() {
         this.showFlag = true;
+        // 初始化
+        this.selectTypeprops = ALL;
+        this.onlyContentprops = true;
         this.$nextTick(() => {
           if (!this.scroll) {
             this.scroll = new BScroll(this.$refs.food, {
@@ -217,7 +229,17 @@
         line-height: 24px;
         padding: 0 8px;
         font-size: 12px;
-        color: rgb(77, 25, 93);
+        color: rgb(77, 85, 93);
+      }
+    }
+    .rating {
+      padding-top: 18px;
+
+      .title {
+        line-height: 14px;
+        margin-left: 18px;
+        font-size: 14px;
+        color: rgb(7, 17, 27);
       }
     }
   }
