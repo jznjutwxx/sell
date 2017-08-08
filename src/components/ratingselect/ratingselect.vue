@@ -77,7 +77,7 @@
           return;
         }
         this.onlyContent = !this.onlyContent;
-        this.$emit('contentToggle');
+        this.$emit('toggle');
       }
     }
     
