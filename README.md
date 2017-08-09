@@ -37,3 +37,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 + 自定义eslint配置,在.eslintrc.js中
 
 
+## 优化内容
+1. 添加后台，不用模拟数据
+2. 使用vuex做组件间的数据传递
+3. 大量重复颜色提取
