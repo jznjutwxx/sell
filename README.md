@@ -35,9 +35,19 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 + es6模板字符串, `用户 ${user.name} 未被授权执行 ${action} 操作。` 这样的插值操作就可以通过模板字符串自然优雅的拼接字符串
 + 可以配置引入component的路径，在webpack.base.conf的resolve里面
 + 自定义eslint配置,在.eslintrc.js中
++ 收藏商家效果涉及解析url
++ APP.vue引入common时必须添加绝对路径'./'
++ 对象扩展属性  Object.assign
 
+## 规范
+1. 位置属性(position, top, right, z-index, display, float,vertical-align等)
+2. 大小(width, height, padding, margin)
+3. 文字系列(font, line-height, letter-spacing, color- text-align等)
+4. 背景(background, border等)
+5. 其他(animation, transition,overflow等) 
 
 ## 优化内容
 1. 添加后台，不用模拟数据
 2. 使用vuex做组件间的数据传递
 3. 大量重复颜色提取
+

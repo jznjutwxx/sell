@@ -1,7 +1,7 @@
 // 图标字体组件
 <template>
   <ul v-if="listdata" class="lists">
-    <li v-for="(item, index) in newlistdata" class="list-item" :key="index">
+    <li v-for="(item, index) in newlistdata" class="list-item" :key="index" :class="classes">
       <span class="icon" :class="classMap[newlistdata[index].type]"></span>
       <span class="text">{{newlistdata[index].name}}</span>
     </li>
@@ -15,9 +15,13 @@
       },
       amount: {
         type: Number
+      },
+      classes: {
+        type: String,
+        default: ''
       }
     },
-    mounted() {
+    created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
     computed: {

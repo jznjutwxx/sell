@@ -25,10 +25,11 @@
         </div>
       </div>
       <split></split>
-      <ratingselect :select-typeprops="selectType" :only-contentprops="onlyContent" :ratings="ratings"></ratingselect>
+      <ratingselect :select-typeprops="selectType" :only-contentprops="onlyContent" :ratings="ratings"
+                    @toggle="contentToggle" @select="selectRating"></ratingselect>
       <div class="rating-wrapper">
         <ul>
-          <li v-for="(rating, index) in ratings" class="rating-item" :key="index">
+          <li v-for="(rating, index) in ratings" class="rating-item" :key="index" v-show="needShow(rating.rateType, rating.text)">
             <div class="avatar">
               <img :src="rating.avatar" width="28" height="28"/>
             </div>
@@ -38,13 +39,13 @@
                 <star :size="24" :score="rating.score"></star>
                 <span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
               </div>
-              <p class="test">{{rating.text}}</p>
+              <p class="text">{{rating.text}}</p>
               <div class="recommend" v-show="rating.recommend && rating.recommend.length"> 
                 <span class="icon-thumb_up"></span>
                 <span class="item" v-for="(item, index) in rating.recommend" :key="index">{{item}}</span>
               </div>
               <div class="time">
-                {{rating.rateTime}}
+                {{rating.rateTime | formatDate}}
               </div>
             </div>
           </li>
@@ -59,6 +60,7 @@ import BScroll from 'better-scroll';
 import star from 'components/star/star';
 import split from 'components/split/split';
 import ratingselect from 'components/ratingselect/ratingselect';
+import {formatDate} from '../../common/js/date';
 
 const ALL = 2;
 const ERR_OK = 0;
@@ -86,8 +88,38 @@ export default{
     return {
       ratings: [],
       selectType: ALL, // 只显示筛选过后的评价
-      onlyContent: false // 只显示有内容的评价
+      onlyContent: true // 只显示有内容的评价
     };
+  },
+  methods: {
+    contentToggle() {
+      this.onlyContent = !this.onlyContent;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
+    },
+    needShow(type, text) {
+      if (this.onlyContent && !text) {
+        return false;
+      }
+      if (this.selectType === ALL) {
+        return true;
+      } else {
+        return this.selectType === type;
+      }
+    },
+    selectRating(type) {
+      this.selectType = type;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
+    }
+  },
+  filters: {
+    formatDate(time) {
+      let date = new Date(time);
+      return formatDate(date, 'yyyy-MM-dd hh:mm');
+    }
   },
   components: {
     star,
@@ -236,6 +268,34 @@ export default{
           line-height: 18px;
           color: rgb(7, 17, 27);
           font-size: 12px;
+        }
+        .recommend {
+          line-height: 16px;
+          font-size: 0;
+
+          .icon-thumb_up, .item {
+            display: inline-block;
+            margin: 0 8px 4px 0;
+            font-size: 9px;
+          }
+          .icon-thumb_up{
+            color: rgb(0, 160, 220);
+          }
+          .item {
+            padding: 0 6px;
+            border: 1px solid rgba(7, 17, 27, 0.1);
+            border-radius: 1px;
+            color: rgb(147, 153, 159);
+            background: #fff;
+          }
+        }
+        .time {
+          position: absolute;
+          top: 0;
+          right: 0;
+          line-height: 12px;
+          font-size: 10px;
+          color: rgb(147, 153, 159);
         }
       }
     }

@@ -16,7 +16,8 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+import {urlParse} from './common/js/util';
 import header from 'components/header/header';
 
 const ERR_OK = 0;// 状态码
@@ -25,14 +26,21 @@ export default {
   name: 'app',
   data() {
     return {
-      seller: {}
+      seller: {
+        id: (() => {
+          let queryParam = urlParse();
+          return queryParam.id;
+        })()
+      }
     };
   },
   mounted() {
-    this.$http.get('/api/seller').then((response) => {
+    this.$http.get('/api/seller?id=' + this.seller.id).then((response) => {
       response = response.body;
       if (response.errno === ERR_OK) {
-        this.seller = response.data;
+        // this.seller = response.data;
+        // 扩展this.seller, 给对象扩展属性
+        this.seller = Object.assign({}, this.seller, response.data);
       }
     });
   },
@@ -43,12 +51,6 @@ export default {
 </script>
 
 <style lang="scss" scope>
-// 1.位置属性(position, top, right, z-index, display, float,vertical-align等)
-// 2.大小(width, height, padding, margin)
-// 3.文字系列(font, line-height, letter-spacing, color- text-align等)
-// 4.背景(background, border等)
-// 5.其他(animation, transition,overflow等)
-
 // 使用混合依旧需要单独引入
 @import './common/scss/mixin.scss';
 
@@ -82,6 +84,4 @@ export default {
     }
   } 
 }
-
-
 </style>
