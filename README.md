@@ -38,6 +38,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 + 收藏商家效果涉及解析url
 + APP.vue引入common时必须添加绝对路径'./'
 + 对象扩展属性  Object.assign
++ route切换，状态保留 keep-alive  减少请求
 
 ## 规范
 1. 位置属性(position, top, right, z-index, display, float,vertical-align等)

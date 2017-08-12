@@ -83,7 +83,9 @@ export default{
     });
   },
   watch: {
-    // 异步获取到seller
+    // 异步获取到seller，如果不添加keepalive属性，整个流程是,
+    // 在mounted中初始化BSscroll等，然后异步获取到seller，监听seller的改变重新渲染计算，
+    // 同样的逻辑被触发了两次，但是添加keepalve保留状态就不会出现这种情况
     'seller'() {
       this.$nextTick(() => {
         this._initScroll();
