@@ -40,6 +40,10 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 + 对象扩展属性  Object.assign
 + route切换，状态保留 keep-alive  减少请求
 
+## 打包
++ productionSourceMap: false 关闭调试
++ 配置端口号9000 
+
 ## 规范
 1. 位置属性(position, top, right, z-index, display, float,vertical-align等)
 2. 大小(width, height, padding, margin)
