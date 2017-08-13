@@ -39,6 +39,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 + APP.vue引入common时必须添加绝对路径'./'
 + 对象扩展属性  Object.assign
 + route切换，状态保留 keep-alive  减少请求
++ 虚化背景的时候会出现shadow，使用overflow隐藏
 
 ## 打包
 + productionSourceMap: false 关闭调试
@@ -54,5 +55,5 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 ## 优化内容
 1. 添加后台，不用模拟数据
 2. 使用vuex做组件间的数据传递
-3. 大量重复颜色提取
+3. 大量重复颜色提取: 尝试了一下，有一些问题导致我放弃了。 首先颜色在做ui的时候其实分区不明显，比如text文本统一用什么颜色，title统一用什么颜色，其次，除了router组件外，许多可复用组件，在整个项目中面另一个问题，就是他们到底应不应该统一颜色管理，或者只在本页面进行项目管理。因为可复用组件意味着应该拥有自身样式，并不对外开放。但是很可惜的是每一个组件中都引入了外部的scss，已经造成了对外部的开发，那么其实现在的整合就失去很多的意义了。不过在以后的项目中可以重新考虑，在css上的优化
 
